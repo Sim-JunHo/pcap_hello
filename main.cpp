@@ -1,4 +1,4 @@
-#include <stdio.h>
+/*#include <stdio.h>
 #include <stdint.h>
 #include <pcap.h>
 #include <time.h>
@@ -21,38 +21,41 @@ const char *HTTP_METHOD_OPTIONS = "OPTIONS";
 const char *HTTP_METHOD_TRACE = "TRACE";
 const char *HTTP_METHOD_PATCH = "PATCH";
 
-
 void *HTTP_METHOD[] = {
-    (void *)HTTP_METHOD_HTTP,
-    (void *)HTTP_METHOD_GET,
-    (void *)HTTP_METHOD_POST,
-    (void *)HTTP_METHOD_PUT,
-    (void *)HTTP_METHOD_DELETE,
-    (void *)HTTP_METHOD_CONNECT,
-    (void *)HTTP_METHOD_OPTIONS,
-    (void *)HTTP_METHOD_TRACE,
-    (void *)HTTP_METHOD_PATCH,
+	(void *)HTTP_METHOD_HTTP,
+	(void *)HTTP_METHOD_GET,
+	(void *)HTTP_METHOD_POST,
+	(void *)HTTP_METHOD_PUT,
+	(void *)HTTP_METHOD_DELETE,
+	(void *)HTTP_METHOD_CONNECT,
+	(void *)HTTP_METHOD_OPTIONS,
+	(void *)HTTP_METHOD_TRACE,
+	(void *)HTTP_METHOD_PATCH,
 
 };
 
-bool HTTPmethod(const uint8_t *data, const char *httpmethod, uint32_t size) {
-    int methodsize = strlen(httpmethod);
-    if(size < methodsize) {
-        return false;
-    }
-    return memcmp(data, httpmethod, methodsize) == 0;//strncmp
+bool HTTPmethod(const uint8_t *data, const char *httpmethod, uint32_t size)
+{
+	int methodsize = strlen(httpmethod);
+	if (size < methodsize)
+	{
+		return false;
+	}
+	return memcmp(data, httpmethod, methodsize) == 0; //strncmp
 }
 
-bool isHTTPprotocol(const uint8_t *p, uint32_t size) {
-    for(int i = 0; i < (sizeof(HTTP_METHOD) / sizeof(void *)); i++) {
-        bool isfind = HTTPmethod(p, (const char *)HTTP_METHOD[i], size);
-        if(isfind) {
-            return isfind;
-        }
-    }
-    return false;
+bool isHTTPprotocol(const uint8_t *p, uint32_t size)
+{
+	for (int i = 0; i < (sizeof(HTTP_METHOD) / sizeof(void *)); i++)
+	{
+		bool isfind = HTTPmethod(p, (const char *)HTTP_METHOD[i], size);
+		if (isfind)
+		{
+			return isfind;
+		}
+	}
+	return false;
 }
-
 
 void usage()
 {
@@ -88,7 +91,6 @@ int main(int argc, char *argv[])
 		const u_char *packet;
 		int res = pcap_next_ex(handle, &header, &packet);
 		int packindex = 0;
-
 		now = clock();
 
 		if (res == 0)
@@ -149,11 +151,12 @@ int main(int argc, char *argv[])
 				uint32_t tcp_size = (ntohs(ip->ip_len) - ((ip->ip_hl + tcp->th_off) * 4));
 				if (tcp_size > 0)
 				{
-					if(isHTTPprotocol(packet + packindex, tcp_size)) {
+					if (isHTTPprotocol(packet + packindex, tcp_size))
+					{
 						printline
-						printf("%s\n", packet + packindex);
+							printf("%s\n", packet + packindex);
 						printline
-						printpack(packet + packindex, tcp_size);
+							printpack(packet + packindex, tcp_size);
 						printline
 					}
 				}
@@ -171,7 +174,7 @@ int main(int argc, char *argv[])
 				if (udp_size > 0)
 				{
 					printline
-					printpack(packet + packindex, udp_size);
+						printpack(packet + packindex, udp_size);
 					printline
 				}
 			}
@@ -184,7 +187,7 @@ int main(int argc, char *argv[])
 				printf("\nICMP CHECKSUM : %u\n", ntohs(icmp->icmp_chksum));
 				uint16_t icmp_size = (ntohs(ip->ip_len) - (ip->ip_hl + packindex + sizeof(icmp_header)));
 				printline
-				printpack(packet + packindex, icmp_size);
+					printpack(packet + packindex, icmp_size);
 				printline
 			}
 		}
@@ -202,7 +205,7 @@ int main(int argc, char *argv[])
 			if (arp_size > 0)
 			{
 				printline
-				printpack(packet + packindex, arp_size);
+					printpack(packet + packindex, arp_size);
 				printline
 			}
 		}
@@ -210,7 +213,15 @@ int main(int argc, char *argv[])
 		//time start~/ms
 		printf("\nTIME : %08.3fms\n\n", (double)now - start);
 	}
-
+	/*char *dev = argv[1];
+	char errbuf[PCAP_ERRBUF_SIZE];
+	pcap_t *handle = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuf);
+	if (handle == NULL)
+	{
+		fprintf(stderr, "couldn't open device %s : %s", dev, errbuf);
+		return -1;
+	}
+	*
 	pcap_close(handle);
 	return 0;
-}
+}*/

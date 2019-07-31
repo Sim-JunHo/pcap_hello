@@ -17,6 +17,8 @@ struct mac_addr {
 };
 
 struct ether_header {
+	mac_addr _src;
+	mac_addr _dst;
 	uint8_t dst[ETH_ALEN];
 	uint8_t src[ETH_ALEN];
 	uint16_t ether_type;

@@ -4,8 +4,8 @@
 #include "all.h"
 
 struct __attribute__((aligned(1), packed)) icmp_header {
-	uint8_t type;
-    uint8_t code;
+	uint8_t icmp_type;
+    uint8_t icmp_code;
 
-	uint16_t chksum;
+	uint16_t icmp_chksum;
 };
